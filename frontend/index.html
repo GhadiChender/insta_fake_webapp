@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Authenticity</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
+      background-color: #ffffff;
+    }
+    .fade {
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen text-gray-900">
+  <div class="w-full max-w-md px-8 text-center">
+    <h1 class="text-4xl font-semibold mb-2 tracking-tight">Account Authenticity</h1>
+    <p class="text-gray-500 mb-8">An elegant AI to detect fake Instagram accounts.</p>
+
+    <input id="username" type="text" placeholder="Enter Instagram username"
+      class="w-full px-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 transition" />
+
+    <button id="analyzeBtn"
+      class="mt-6 w-full py-3 bg-black text-white rounded-full text-lg hover:opacity-90 transition">
+      Analyze
+    </button>
+
+    <div id="result" class="mt-10 opacity-0 fade"></div>
+
+    <footer class="mt-16 text-xs text-gray-400">
+      © <span id="year"></span> FakeCheck AI — Inspired by Apple.
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const button = document.getElementById("analyzeBtn");
+    const resultBox = document.getElementById("result");
+
+    button.addEventListener("click", async () => {
+      const username = document.getElementById("username").value.trim();
+      if (!username) return;
+      button.textContent = "Analyzing...";
+      resultBox.style.opacity = 0;
+
+      try {
+        // 🔗 Replace with your real backend URL
+        const res = await fetch(`https://your-backend-url.onrender.com/analyze/${username}`);
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+        const prob = (data.probability * 100).toFixed(1);
+        const verdict = data.probability > 0.5
+          ? "Likely Fake Account"
+          : "Genuine-Looking Profile";
+
+        resultBox.innerHTML = `
+          <div class="p-6 border border-gray-100 rounded-2xl shadow-sm bg-gray-50">
+            <p class="text-xl font-medium mb-2">Fake Probability: <span class="font-bold">${prob}%</span></p>
+            <p class="text-gray-500">${verdict}</p>
+          </div>`;
+        resultBox.style.opacity = 1;
+      } catch (err) {
+        resultBox.innerHTML = `<p class="text-red-500 font-medium mt-6">${err.message}</p>`;
+        resultBox.style.opacity = 1;
+      } finally {
+        button.textContent = "Analyze";
+      }
+    });
+  </script>
+</body>
+</html>
