@@ -1,2 +1,11 @@
 # insta_fake_webapp
-# Goal
+
+This is a project to predict....
+
+You can view it live here: 
+
+## Underlying Technology
+
+## Backend
+
+## Frontend
